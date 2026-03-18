@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, Column, String, Integer, Boolean, Float, ForeignKey
 from sqlalchemy.orm import declarative_base
 from sqlalchemy_utils.types import ChoiceType
+from sqlalchemy import Enum
 
 # criar a conexão do seu banco
 db = create_engine("sqlite:///banco.db")
@@ -32,11 +33,11 @@ class User(Base):
 class pedido(Base):
     __tablename__="pedidos"
 
-    STATUS_PEDIDOS = (
-        ("PENDENTE", "PENDENTE")
-        ("CANCELADO", "CANCELADO")
-        ("FINALIZADO", "FINALIZADO")
-    )
+    STATUS_PEDIDOS = [
+    ("PENDENTE", "Pendente"),
+    ("CANCELADO", "Cancelado"),
+    ("FINALIZADO", "Finalizado")
+]
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     status = Column("status", ChoiceType(choices=STATUS_PEDIDOS)) #pendente, cancelado, finalizado
