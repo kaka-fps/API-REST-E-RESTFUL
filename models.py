@@ -61,5 +61,11 @@ class ItemPedido(Base):
     price_unit = Column("price_unit", Float)
     pedido = Column("pedido", ForeignKey("pedidos.id"))
 
+    def __init__(self, amount, flavor, size, price_unit, pedido):
+        self.amount = amount
+        self.flavor = flavor
+        self.size = size
+        self.price_unit = price_unit
+        self.pedido = pedido
 
-# executa a criação dos metadados do seu banco (criar efetivamente o banco de dados)C
+# executa a criação dos metadados do seu banco (criar efetivamente o banco de dados)
