@@ -1,6 +1,7 @@
-from fastapi import APIRouter
-from models import User, db
-from sqlalchemy.orm import sessionmaker
+from fastapi import APIRouter, Depends
+from models import User
+from dependencies import get_session
+from main import bcrypt_context
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -12,14 +13,13 @@ async  def home():
     return {"mensage": "Você acessou a rota de padrão de autenticação", "autenticado": False}
 
 @auth_router.post("/criar_conta")
-async  def criar_conta(email: str, senha: str, name: str):
-    Session = sessionmaker(bind = db)
-    Session = Session()
-    user = Session.query(User).filter(User.email==email).first()
+async  def criar_conta(email: str, password: str, name: str, session = Depends(get_session)):
+    user = session.query(User).filter(User.email==email).first()
     if user:
         return {"mensagem": "usuario je existe com esse email"}
     else:
-        new_user = User(name, email, senha)
-        Session.add(new_user)
-        Session.commit()
+        password_criptograpy = bcrypt_context.hash(password)
+        new_user = User(name, email, password_criptograpy)
+        session.add(new_user)
+        session.commit()
         return {"mensagem": "usuario cadastrado com sucesso"}
