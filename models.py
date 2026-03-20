@@ -30,7 +30,7 @@ class User(Base):
 
 # padidos
 
-class pedido(Base):
+class request(Base):
     __tablename__="pedidos"
 
 #    STATUS_PEDIDOS = [
@@ -52,7 +52,7 @@ class pedido(Base):
 
 #itenspedido
 
-class ItemPedido(Base):
+class ItemRequest(Base):
     __tablename__="itens_pedido"
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
@@ -60,13 +60,13 @@ class ItemPedido(Base):
     flavor = Column("flavor", String)
     size = Column("size", String)
     price_unit = Column("price_unit", Float)
-    pedido = Column("pedido", ForeignKey("pedidos.id"))
+    request = Column("request", ForeignKey("requests.id"))
 
-    def __init__(self, amount, flavor, size, price_unit, pedido):
+    def __init__(self, amount, flavor, size, price_unit, request):
         self.amount = amount
         self.flavor = flavor
         self.size = size
         self.price_unit = price_unit
-        self.pedido = pedido
+        self.request = request
 
 # executa a criação dos metadados do seu banco (criar efetivamente o banco de dados)

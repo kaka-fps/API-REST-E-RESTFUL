@@ -11,3 +11,9 @@ class UserSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class RequestSchema(BaseModel):
+    id_user: int
+
+    class Config:
+        from_attributes = True
