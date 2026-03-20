@@ -17,15 +17,15 @@ class User(Base):
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     name = Column("name", String)
     email = Column("email", String, nullable=False)
-    pin = Column("pin",Integer)
-    ativo = Column("ativo",Boolean)
+    password = Column("password",Integer)
+    active = Column("active",Boolean)
     admin = Column("admin",Boolean, default=False)
 
-    def __init__(self, name, email, pin, ativo=True, admin=False):
+    def __init__(self, name, email, password, active=True, admin=False):
         self.name = name
         self.email = email
-        self.pin = pin
-        self.ativo = ativo
+        self.password = password
+        self.active = active
         self.admin = admin
 
 # padidos
