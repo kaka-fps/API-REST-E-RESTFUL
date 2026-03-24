@@ -26,3 +26,5 @@ async  def criar_conta(user_schema: UserSchema, session = Depends(get_session)):
         session.add(new_user)
         session.commit()
         return {"mensagem": f"usuario cadastrado com sucesso {user_schema.email} "}
+
+# login -> email e senha -> token JWT (Json Web Token) dchfiodbhcvucpnc034m2mmic0cv

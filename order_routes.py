@@ -15,7 +15,7 @@ async  def solicits():
 
 @order_router.post("/solicit")
 async def create_Solicit(Solicit_schema: SolicitSchema, session: Session = Depends(get_session)):
-    new_solicit = Solicit(user=Solicit_schema.user)
+    new_solicit = Solicit(user_id=Solicit_schema.user)
     session.add(new_solicit)
     session.commit()
     return {"mensagem": f"pedido criado com sucesso. ID do pedido: {new_solicit.id} "}
