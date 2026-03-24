@@ -12,7 +12,7 @@ Base = declarative_base()
 #criar as classes/tabelas do banco
 
 class User(Base):
-    __tablename__="usuarios"
+    __tablename__="user"
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     name = Column("name", String)
@@ -30,8 +30,8 @@ class User(Base):
 
 # padidos
 
-class request(Base):
-    __tablename__="pedidos"
+class Solicit(Base):
+    __tablename__="solicit"
 
 #    STATUS_PEDIDOS = [
 #    ("PENDENTE", "Pendente"),
@@ -41,26 +41,26 @@ class request(Base):
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     status = Column("status", String) #pendente, cancelado, finalizado
-    user = Column("user", ForeignKey("usuarios.id"))
+    user_id  = Column("user", ForeignKey("user.id"))
     price = Column("price", Float,)
     # itens = Column("itens",)
 
-    def __init__(self, user, status="PENDENTE", price=0):
-        self.user = user
+    def __init__(self, user_id, status="PENDENTE", price=0):
+        self.user_id = user_id
         self.price = price
         self.status = status
 
 #itenspedido
 
-class ItemRequest(Base):
-    __tablename__="itens_pedido"
+class ItemOrder(Base):
+    __tablename__="itens_order"
 
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     amount = Column("amount", Integer)
     flavor = Column("flavor", String)
-    size = Column("size", String)
+    size = Column("size", String) 
     price_unit = Column("price_unit", Float)
-    request = Column("request", ForeignKey("requests.id"))
+    solicit_id = Column("solicit", ForeignKey("solicit.id"))
 
     def __init__(self, amount, flavor, size, price_unit, request):
         self.amount = amount
