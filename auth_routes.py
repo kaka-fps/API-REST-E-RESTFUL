@@ -16,10 +16,10 @@ def autenty_user(email, password, session):
     user = session.query(User).filter(User.email==email).first()
     if not user:
         return False
-    elif bcrypt_context.verify(password, User.password):
+    elif not bcrypt_context.verify(password, user.password):
         return False
     
-
+    return user
 
 
 @auth_router.get("/")
@@ -44,9 +44,9 @@ async  def criar_conta(user_schema: UserSchema, session: Session = Depends(get_s
 # login -> email e senha -> token JWT (Json Web Token) dchfiodbhcvucpnc034m2mmic0cv
 @auth_router.post("/login")
 async def login(login_schema: LoginSchema, session: Session = Depends(get_session)):
-    user = autenty_user(login_schema.email,login_schema.password,Session)
+    user = autenty_user(login_schema.email, login_schema.password, session)
     if not user:
-        raise HTTPException(status_code=400, detail="Usuário não encontrado")
+        raise HTTPException(status_code=400, detail="Usuário não encontrado ou credenciais invalidas")
     else:
         access_token = create_token(user.id)
         return {"access_token": access_token,
