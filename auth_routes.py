@@ -71,3 +71,6 @@ async def user_refresh_token(token):
     #verificar o token
     user = verify_token(token)
     access_token = create_token(user.id)
+    return {"access_token": access_token,
+            "token_type": "Bearer"
+            }
