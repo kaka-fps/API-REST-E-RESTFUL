@@ -9,6 +9,10 @@ from sqlalchemy.orm import Session
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 def create_token(id_user):
+    # JWT
+    # id_user
+    #datd=a_expiracao
+    
     token = f"75SrSS0l0tqdHyCXgUqSpIDTuicAAFfP2OC7dWoOx3Kj17UrIJUOlrpJYfZWw8k4{id_user}"
     return token
 
