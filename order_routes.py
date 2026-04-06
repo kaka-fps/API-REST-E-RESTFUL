@@ -36,3 +36,8 @@ async def cancel_order(id_order: int, session: Session = Depends(get_session), u
         "mensagem": f"Pedido numero: {order.id} cancelado cancelado com sucesso",
         "pedido": order
     }
+
+@order_router.get("/list")
+async def list_order(session: Session = Depends(get_session), user: User = Depends(verify_token)):
+    if user.admin == False:
+        raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
