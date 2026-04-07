@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from dependencies import get_session, verify_token
-from schemas import SolicitSchema
+from schemas import SolicitSchema, ItemorderSchema
 from models import Solicit, User
 
 order_router = APIRouter(prefix="/requests", tags=["requests"], dependencies=[Depends(verify_token)])
@@ -39,11 +39,25 @@ async def cancel_order(id_order: int, session: Session = Depends(get_session), u
 
 @order_router.get("/list")
 async def list_order(session: Session = Depends(get_session), user: User = Depends(verify_token)):
-    if user.admin == False:
+    if not user.admin:
         raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
     else:
         solicits = session.query(Solicit).all()
         return {
-            "pedidos" : Solicit
-
+            "pedidos" : solicits
         }
+
+@order_router.post("/order/add-item/{id_order}")
+async def add_item_order(id_order: int, item_add_schema: ItemorderSchema, session: Session = Depends(get_session), user: User = Depends(verify_token)):
+    solicit = session.query(Solicit).filter(Solicit.id==id_order).first()
+    if not solicit:
+        raise  HTTPException(status_code=400, detail="pedido não existe")
+    if not user.admin and user.id != solicit.user_id:
+        raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
+    intem_order = ItemorderSchema(ItemorderSchema.amount, ItemorderSchema.flavor, ItemorderSchema.size, ItemorderSchema.price_unit, id_order)
+    solicit.calculate_price()
+    session.add(intem_order)
+    session.commit()
+    return {
+        "mensagem": "item criado com sucesso"
+    }

@@ -50,6 +50,12 @@ class Solicit(Base):
         self.price = price
         self.status = status
 
+    def calculate_price(self):
+        # percorrer todos os itens do pedido
+        # somar todos os precos de todos os itens do pedido
+        # editar no campo "preço" o valor final do pedido
+        self.price = 10
+
 #itenspedido
 
 class ItemOrder(Base):
