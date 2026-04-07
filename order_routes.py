@@ -41,3 +41,9 @@ async def cancel_order(id_order: int, session: Session = Depends(get_session), u
 async def list_order(session: Session = Depends(get_session), user: User = Depends(verify_token)):
     if user.admin == False:
         raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
+    else:
+        solicits = session.query(Solicit).all()
+        return {
+            "pedidos" : Solicit
+
+        }
