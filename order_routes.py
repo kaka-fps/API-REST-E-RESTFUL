@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from dependencies import get_session, verify_token
 from schemas import SolicitSchema, ItemorderSchema
-from models import Solicit, User
+from models import Solicit, User, ItemOrder
 
 order_router = APIRouter(prefix="/requests", tags=["requests"], dependencies=[Depends(verify_token)])
 
@@ -54,10 +54,12 @@ async def add_item_order(id_order: int, item_add_schema: ItemorderSchema, sessio
         raise  HTTPException(status_code=400, detail="pedido não existe")
     if not user.admin and user.id != solicit.user_id:
         raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
-    intem_order = ItemorderSchema(ItemorderSchema.amount, ItemorderSchema.flavor, ItemorderSchema.size, ItemorderSchema.price_unit, id_order)
+    item_order = ItemOrder(item_add_schema.amount, item_add_schema.flavor, item_add_schema.size, item_add_schema.price_unit, id_order)
     solicit.calculate_price()
-    session.add(intem_order)
+    session.add(item_order)
     session.commit()
     return {
-        "mensagem": "item criado com sucesso"
+        "mensagem": "item criado com sucesso",
+        "item_id": item_order,
+        "preço_pedido": solicit.price
     }

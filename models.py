@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, Column, String, Integer, Boolean, Float, ForeignKey
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils.types import ChoiceType
 from sqlalchemy import Enum
 
@@ -43,7 +43,7 @@ class Solicit(Base):
     status = Column("status", String) #pendente, cancelado, finalizado
     user_id  = Column("user", ForeignKey("user.id"))
     price = Column("price", Float,)
-    # itens = Column("itens",)
+    itens = relationship("ItemOrder", cascade="all, delete")
 
     def __init__(self, user_id, status="PENDENTE", price=0):
         self.user_id = user_id
@@ -54,7 +54,15 @@ class Solicit(Base):
         # percorrer todos os itens do pedido
         # somar todos os precos de todos os itens do pedido
         # editar no campo "preço" o valor final do pedido
-        self.price = 10
+
+        """
+        price_order = 0
+        for item in self.itens:
+            price_item = item.price_unit * item.amount
+            price_order += price_item
+        """
+
+        self.price = sum(item.price_unit * item.amount for item in self.itens)
 
 #itenspedido
 
@@ -76,3 +84,8 @@ class ItemOrder(Base):
         self.request = request
 
 # executa a criação dos metadados do seu banco (criar efetivamente o banco de dados)
+
+# migrar o banco de dados 
+
+# criar a migração: alembic revision --autogenerate -m "mensagem"
+#executar a migração: alembic upgrade head
