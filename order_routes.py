@@ -54,7 +54,12 @@ async def add_item_order(id_order: int, item_add_schema: ItemorderSchema, sessio
         raise  HTTPException(status_code=400, detail="pedido não existe")
     if not user.admin and user.id != solicit.user_id:
         raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
-    item_order = ItemOrder(item_add_schema.amount, item_add_schema.flavor, item_add_schema.size, item_add_schema.price_unit, id_order)
+    item_order = ItemOrder(
+        item_add_schema.amount,
+        item_add_schema.flavor,
+        item_add_schema.size,
+        item_add_schema.price_unit,
+        solicit)
     solicit.calculate_price()
     session.add(item_order)
     session.commit()

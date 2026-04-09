@@ -43,7 +43,7 @@ class Solicit(Base):
     status = Column("status", String) #pendente, cancelado, finalizado
     user_id  = Column("user", ForeignKey("user.id"))
     price = Column("price", Float,)
-    itens = relationship("ItemOrder", cascade="all, delete")
+    itens = relationship("ItemOrder", back_populates="solicit", cascade="all, delete")
 
     def __init__(self, user_id, status="PENDENTE", price=0):
         self.user_id = user_id
@@ -55,14 +55,14 @@ class Solicit(Base):
         # somar todos os precos de todos os itens do pedido
         # editar no campo "preço" o valor final do pedido
 
-        """
+
         price_order = 0
         for item in self.itens:
-            price_item = item.price_unit * item.amount
+            price_item = item.price_unit * item.amount 
             price_order += price_item
-        """
 
-        self.price = sum(item.price_unit * item.amount for item in self.itens)
+
+        # self.price = sum(item.price_unit * item.amount for item in self.itens)
 
 #itenspedido
 
@@ -76,12 +76,14 @@ class ItemOrder(Base):
     price_unit = Column("price_unit", Float)
     solicit_id = Column("solicit", ForeignKey("solicit.id"))
 
-    def __init__(self, amount, flavor, size, price_unit, request):
+    solicit = relationship("Solicit", back_populates="itens")
+
+    def __init__(self, amount, flavor, size, price_unit, solicit):
         self.amount = amount
         self.flavor = flavor
         self.size = size
         self.price_unit = price_unit
-        self.request = request
+        self.solicit = solicit
 
 # executa a criação dos metadados do seu banco (criar efetivamente o banco de dados)
 
