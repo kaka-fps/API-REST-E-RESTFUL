@@ -42,27 +42,30 @@ class Solicit(Base):
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     status = Column("status", String) #pendente, cancelado, finalizado
     user_id  = Column("user", ForeignKey("user.id"))
-    price = Column("price", Float,)
-    itens = relationship("ItemOrder", back_populates="solicit", cascade="all, delete")
+    price = Column("price", Float)
+    itens = relationship("ItemOrder",back_populates="solicit", cascade="all, delete")
+
+    def calculate_price(self):
+        self.price = sum(item.price_unit * item.amount for item in self.itens)
 
     def __init__(self, user_id, status="PENDENTE", price=0):
         self.user_id = user_id
         self.price = price
         self.status = status
 
-    def calculate_price(self):
+    #def calculate_price(self):
         # percorrer todos os itens do pedido
         # somar todos os precos de todos os itens do pedido
-        # editar no campo "preço" o valor final do pedido
+        # editar 
 
+        # self.price = 10
 
-        price_order = 0
-        for item in self.itens:
-            price_item = item.price_unit * item.amount 
-            price_order += price_item
+        #price_order = 0
+        #for item in self.itens:
+        #    price_item = item.price_unit * item.amount 
+        #    price_order += price_item
 
-
-        # self.price = sum(item.price_unit * item.amount for item in self.itens)
+        #self.price = sum(item.price_unit * item.amount for item in self.itens)
 
 #itenspedido
 

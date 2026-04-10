@@ -48,20 +48,26 @@ async def list_order(session: Session = Depends(get_session), user: User = Depen
         }
 
 @order_router.post("/order/add-item/{id_order}")
-async def add_item_order(id_order: int, item_add_schema: ItemorderSchema, session: Session = Depends(get_session), user: User = Depends(verify_token)):
+async def add_item_order(id_order: int,
+                        item_order_schema: ItemorderSchema,
+                        session: Session = Depends(get_session),
+                        user: User = Depends(verify_token)):
     solicit = session.query(Solicit).filter(Solicit.id==id_order).first()
     if not solicit:
         raise  HTTPException(status_code=400, detail="pedido não existe")
     if not user.admin and user.id != solicit.user_id:
         raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
     item_order = ItemOrder(
-        item_add_schema.amount,
-        item_add_schema.flavor,
-        item_add_schema.size,
-        item_add_schema.price_unit,
+        item_order_schema.amount,
+        item_order_schema.flavor,
+        item_order_schema.size,
+        item_order_schema.price_unit,
         solicit)
-    solicit.calculate_price()
     session.add(item_order)
+    session.flush()
+    
+    solicit.calculate_price()
+    
     session.commit()
     return {
         "mensagem": "item criado com sucesso",
