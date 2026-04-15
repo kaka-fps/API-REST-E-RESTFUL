@@ -79,7 +79,8 @@ async def add_item_order(id_order: int,
 async def remove_item_order(id_item_order: int,
                         session: Session = Depends(get_session),
                         user: User = Depends(verify_token)):
-    item_order = session.query(ItemOrder).filter(ItemOrder.id==id_item_order).first()
+    item_order = session.query(ItemOrder).filter(ItemOrder.id == id_item_order).first()
+    order = session.query(Solicit).filter(Solicit.id == item_order.solicit_id).first()
     if not item_order:
         raise  HTTPException(status_code=400, detail="item no pedido não existe")
     if not user.admin and user.id != item_order.user_id:
@@ -87,10 +88,11 @@ async def remove_item_order(id_item_order: int,
     session.delete(item_order)
     session.flush()
     
-    item_order.solicit.calculate_price()
+    order.calculate_price()
     
     session.commit()
     return {
         "mensagem": "item removido com sucesso",
-        "pedido": item_order.solicit
+        "preço_pedido": order.price,
+        "pedido": order
     }
