@@ -93,6 +93,46 @@ async def remove_item_order(id_item_order: int,
     session.commit()
     return {
         "mensagem": "item removido com sucesso",
-        "preço_pedido": order.price,
+        "preço_pedido": order.itens,
         "pedido": order
     }
+
+#FINALIZAR UM PEDIDO
+
+@order_router.post("/order/finished/{id_item_order}")
+async def finishend_order(id_item_order: int,
+                        session: Session = Depends(get_session),
+                        user: User = Depends(verify_token)):
+    item_order = session.query(ItemOrder).filter(ItemOrder.id == id_item_order).first()
+    order = session.query(Solicit).filter(Solicit.id == item_order.solicit_id).first()
+    if not item_order:
+        raise  HTTPException(status_code=400, detail="pedido não encontrado")
+    if not user.admin and user.id != item_order.user_id:
+        raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
+    order.status = "FINALIZADO"
+    session.flush()
+    
+    order.calculate_price()
+    
+    session.commit()
+    return {
+        "mensagem": "item removido com sucesso",
+        "preço_pedido": order.id,
+        "pedido": order
+    }
+
+#VISUALIZAR 1 PEDIDO
+
+@order_router.get("/pedido/{id_order}")
+async def view_order(id_order: int, session: Session = Depends(get_session), user: User = Depends(verify_token)):
+    order = session.query(Solicit).filter(Solicit.id == id_order).first()
+    if not order:
+        raise  HTTPException(status_code=400, detail="pedido não encontrado")
+    if not user.admin and user.id != order.user_id:
+        raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
+    return {
+        "quantidade_itens_pedido": len(order.itens)
+
+    }
+
+#VISUALIZAR TODOS OS PEDIDOS DE 1 USUÁRIO 
