@@ -131,8 +131,17 @@ async def view_order(id_order: int, session: Session = Depends(get_session), use
     if not user.admin and user.id != order.user_id:
         raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
     return {
-        "quantidade_itens_pedido": len(order.itens)
-
+        "quantidade_itens_pedido": len(order.itens),
+        "pedido": order
     }
 
 #VISUALIZAR TODOS OS PEDIDOS DE 1 USUÁRIO 
+@order_router.get ("/listar/pedidos-usuarios")
+async def list_order( session: Session = Depends(get_session), user: User = Depends(verify_token)):
+    if not user.admin:
+        raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
+    else:
+        solicits = session.query(Solicit).filter(Solicit.user==user.id)
+        return {
+            "pedidos" : solicits
+        }
