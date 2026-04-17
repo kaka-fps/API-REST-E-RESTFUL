@@ -141,7 +141,7 @@ async def list_order( session: Session = Depends(get_session), user: User = Depe
     if not user.admin:
         raise  HTTPException(status_code=401, detail="você não tem autorização para fazer essa operação")
     else:
-        solicits = session.query(Solicit).filter(Solicit.user==user.id)
+        solicits = session.query(Solicit).filter(Solicit.user==user.id).all
         return {
             "pedidos" : solicits
         }
